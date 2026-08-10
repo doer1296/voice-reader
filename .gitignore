@@ -1,0 +1,27 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Voice Reader runtime
+pending.txt
+stop.flag
+
+# Temp PowerShell scripts
+*.ps1
+!install.ps1
+!uninstall.ps1
+
+# Logs
+*.log
