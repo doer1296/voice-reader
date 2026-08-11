@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trae Voice Reader 使用说明书</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#64748b;--accent:#60a5fa;--accent2:#a78bfa;--green:#10b981;--yellow:#f59e0b;--red:#ef4444}
+body{font-family:'Segoe UI','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:40px 20px}
+.wrap{max-width:900px;margin:0 auto}
+.page{background:var(--card);border-radius:14px;padding:36px;margin:24px 0;border:1px solid var(--border);page-break-after:always}
+.page:last-child{margin-bottom:0}
+.page-num{text-align:right;color:var(--muted);font-size:0.8em;margin-top:20px;border-top:1px solid var(--border);padding-top:12px}
+h1{font-size:2em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+h2{font-size:1.4em;color:var(--accent);margin:0 0 18px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+h3{color:var(--accent2);margin:18px 0 8px;font-size:1.05em}
+p{margin-bottom:10px;color:#cbd5e1}
+.tag{display:inline-block;background:#1d4ed8;color:#93c5fd;padding:3px 12px;border-radius:14px;font-size:0.8em;margin:4px}
+code{background:#0f172a;padding:2px 7px;border-radius:4px;color:#67e8f9;font-size:0.88em}
+pre{background:#0f172a;border-radius:8px;padding:14px;margin:10px 0;overflow-x:auto;font-size:0.82em;line-height:1.5;border:1px solid var(--border)}
+pre code{background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:0.88em}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:#1e293b;color:#93c5fd;font-weight:600}
+td{color:#cbd5e1}
+.card{background:#0f172a;border-radius:8px;padding:14px;margin:10px 0;border-left:3px solid var(--accent)}
+.card.green{border-left-color:var(--green)}
+.card.yellow{border-left-color:var(--yellow)}
+.card.red{border-left-color:var(--red)}
+ul,ol{margin:6px 0 10px 18px}
+li{margin-bottom:4px;color:#cbd5e1}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:0.85em;justify-content:center;padding:16px;background:#0f172a;border:1px solid var(--border);border-radius:10px;color:var(--accent2);margin:12px 0}
+.flow .step-item{background:#1e293b;padding:5px 12px;border-radius:6px}
+.flow .arr{color:#475569}
+header{text-align:center;padding:30px 0 20px}
+.footer{text-align:center;padding:24px 0;color:#334155;font-size:0.8em;border-top:1px solid var(--border);margin-top:30px}
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
+nav a{display:inline-block;background:#1d4ed8;color:#93c5fd;padding:5px 14px;border-radius:6px;font-size:0.82em;text-decoration:none}
+nav a:hover{background:#2563eb}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ==================== 第 1 页：概览 ==================== -->
+<div class="page">
+<header>
+<h1>🔊 Trae Voice Reader</h1>
+<p>使用说明书 v5.0</p>
+<span class="tag">SAPI 原生</span>
+<span class="tag">差异化提示音</span>
+<span class="tag">全局共享</span>
+</header>
+
+<h2>概述</h2>
+<p>Trae Voice Reader 是基于 Windows SAPI 的语音朗读系统，实现 AI 回复的自动语音朗读。支持四种差异化提示音（info / success / error / warning），让用户通过声音区分内容类型。</p>
+
+<nav>
+<a href="#overview">第 1 页 概览</a>
+<a href="#start">第 2 页 快速开始</a>
+<a href="#files">第 3 页 文件说明</a>
+<a href="#invoke">第 4 页 调用方式</a>
+<a href="#types">第 5 页 提示音类型</a>
+<a href="#arch">第 6 页 系统架构</a>
+<a href="#faq">第 7 页 故障排查</a>
+<a href="#config">第 8 页 配置选项</a>
+</nav>
+
+<h2>核心特性</h2>
+<ul>
+<li>SAPI 原生引擎，多音字朗读准确（储蓄 chǔ xù、银行 yín háng 等）</li>
+<li>AI 自动朗读用户输入和回复内容</li>
+<li>四种差异化提示音，声音区分内容类型</li>
+<li>全局共享文件机制，所有任务可跨 workspace 调用</li>
+<li>极低资源占用（watcher 仅 37 MB，CPU 接近 0%）</li>
+</ul>
+
+<h2>系统要求</h2>
+<table>
+<tr><th>项目</th><th>要求</th></tr>
+<tr><td>操作系统</td><td>Windows 10/11</td></tr>
+<tr><td>Node.js</td><td>18.x 或更高</td></tr>
+<tr><td>音频</td><td>扬声器或耳机正常工作</td></tr>
+</table>
+
+<div class="page-num">第 1 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 2 页：快速开始 ==================== -->
+<div class="page" id="start">
+<h2>快速开始</h2>
+
+<h3>2.1 安装 Node.js</h3>
+<p>前往 <a href="https://nodejs.org" style="color:var(--accent)">nodejs.org</a> 下载 LTS 版本安装，验证：</p>
+<pre><code>node --version</code></pre>
+
+<h3>2.2 确认核心文件</h3>
+<p>全局共享路径 <code>C:\Users\15390\.trae-cn\work\.voice-reader\</code> 下应有：</p>
+<pre><code>.voice-reader/
+├── lib.js              # 公共模块
+├── voice-reader.mjs    # 朗读引擎
+├── voice-watcher.mjs   # 后台监听器
+├── package.json        # 配置 {"type":"module"}
+└── pending.txt         # 共享朗读文件</code></pre>
+
+<h3>2.3 启动监听器</h3>
+<pre><code>node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-watcher.mjs"</code></pre>
+<p>看到以下输出表示启动成功：</p>
+<pre><code>Voice Reader 监听器已启动
+轮询路径: C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt
+支持类型: info / success / error / warning</code></pre>
+
+<h3>2.4 测试朗读</h3>
+<pre><code>node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-reader.mjs" "测试朗读，你好世界"</code></pre>
+<p>听到语音即表示系统正常。</p>
+
+<div class="page-num">第 2 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 3 页：文件说明 ==================== -->
+<div class="page" id="files">
+<h2>文件说明</h2>
+
+<h3>3.1 核心文件</h3>
+<table>
+<tr><th>文件</th><th>大小</th><th>说明</th></tr>
+<tr><td><code>lib.js</code></td><td>~2 KB</td><td>公共模块：常量、提示音配置、文本清洗函数</td></tr>
+<tr><td><code>voice-reader.mjs</code></td><td>~2.4 KB</td><td>朗读引擎：命令行调用，支持 <code>--stop</code></td></tr>
+<tr><td><code>voice-watcher.mjs</code></td><td>~1.7 KB</td><td>后台监听器：2 秒轮询 pending.txt 自动朗读</td></tr>
+<tr><td><code>package.json</code></td><td>~308 B</td><td><code>{"type":"module"}</code> ES Module 配置</td></tr>
+</table>
+
+<h3>3.2 共享文件</h3>
+<table>
+<tr><th>路径</th><th>说明</th></tr>
+<tr><td><code>C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt</code></td><td>所有任务共享的朗读输入文件</td></tr>
+<tr><td><code>C:\Users\15390\.trae-cn\work\.voice-reader\stop.flag</code></td><td>暂停信号文件，创建后 watcher 暂停朗读</td></tr>
+<tr><td><code>C:\Users\15390\.trae-cn\work\.voice-reader\config.json</code></td><td>配置（语速、音量等）</td></tr>
+</table>
+
+<h3>3.3 Skill 文件</h3>
+<pre><code>C:\Users\15390\.trae-cn\skills\voice-reader-injector\
+└── SKILL.md                 # Skill 定义（AI 读取调用）</code></pre>
+
+<h3>3.4 系统资源</h3>
+<div class="card green">
+<table>
+<tr><th>指标</th><th>数值</th></tr>
+<tr><td>watcher 进程内存</td><td>37 MB</td></tr>
+<tr><td>CPU 开销</td><td>接近 0%</td></tr>
+<tr><td>内存泄漏</td><td>无（60 秒内增长 &lt; 200 KB）</td></tr>
+</table>
+</div>
+
+<div class="page-num">第 3 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 4 页：调用方式 ==================== -->
+<div class="page" id="invoke">
+<h2>调用方式</h2>
+
+<h3>4.1 Skill 自动调用（推荐）</h3>
+<p>新建任务，输入：</p>
+<pre><code>Use Skill: voice-reader</code></pre>
+<p>AI 自动执行三步：</p>
+
+<h4>第 0 步：确保监听器运行</h4>
+<pre><code>$r = Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -like '*voice-watcher.mjs*' }
+if (-not $r) {
+    Start-Process -WindowStyle Hidden node -ArgumentList "C:\Users\15390\.trae-cn\work\.voice-reader\voice-watcher.mjs"
+    Write-Host "监听器已启动"
+} else {
+    Write-Host "监听器已在运行"
+}</code></pre>
+
+<h4>第 1 步：朗读用户输入（先清空再写入）</h4>
+<pre><code>$f = "C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt"
+[System.IO.File]::WriteAllText($f, "", [System.Text.Encoding]::UTF8)
+$c = @"
+[VOICE_READER_START:info]
+用户说：XXX
+[VOICE_READER_END]
+"@
+[System.IO.File]::WriteAllText($f, $c, [System.Text.Encoding]::UTF8)</code></pre>
+
+<h4>第 2 步：朗读回复内容（直接写入）</h4>
+<pre><code>$c = @"
+[VOICE_READER_START:info]
+回复内容（2-3 句，不超过 100 字，只说结论）
+[VOICE_READER_END]
+"@
+[System.IO.File]::WriteAllText("C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt", $c, [System.Text.Encoding]::UTF8)</code></pre>
+
+<h3>4.2 命令行朗读</h3>
+<pre><code>node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-reader.mjs" "要朗读的文字"</code></pre>
+
+<h3>4.3 直接写入朗读</h3>
+<pre><code>$f = "C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt"
+[System.IO.File]::WriteAllText($f, "", [System.Text.Encoding]::UTF8)
+$c = @"
+[VOICE_READER_START:info]
+要朗读的内容
+[VOICE_READER_END]
+"@
+[System.IO.File]::WriteAllText($f, $c, [System.Text.Encoding]::UTF8)</code></pre>
+
+<h3>4.4 停止朗读</h3>
+<pre><code>node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-reader.mjs" --stop</code></pre>
+<p>或写入 stop.flag：</p>
+<pre><code>[System.IO.File]::WriteAllText("C:\Users\15390\.trae-cn\work\.voice-reader\stop.flag", "STOP", [System.Text.Encoding]::UTF8)</code></pre>
+
+<h3>4.5 查看状态</h3>
+<pre><code># 监听器进程
+Get-CimInstance Win32_Process -Filter "Name='node.exe'" |
+  Where-Object { $_.CommandLine -like '*voice-watcher.mjs*' } |
+  Select-Object ProcessId, CommandLine
+
+# pending.txt 内容
+Get-Content "C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt" -Encoding UTF8</code></pre>
+
+<div class="page-num">第 4 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 5 页：提示音类型 ==================== -->
+<div class="page" id="types">
+<h2>提示音类型</h2>
+
+<h3>5.1 四种类型对比</h3>
+<table>
+<tr><th>类型</th><th>标记</th><th>开始提示音</th><th>结束提示音</th><th>使用场景</th></tr>
+<tr><td><span style="color:var(--accent)">info</span></td><td><code>[:info]</code></td><td>800→1200Hz 升调</td><td>600Hz 单音</td><td>日常对话</td></tr>
+<tr><td><span style="color:var(--green)">success</span></td><td><code>[:success]</code></td><td>600→800→1200Hz 三阶升</td><td>1200→600Hz 降调</td><td>任务完成</td></tr>
+<tr><td><span style="color:var(--red)">error</span></td><td><code>[:error]</code></td><td>1000→600→400Hz 三阶降</td><td>300Hz 低沉</td><td>报错提醒</td></tr>
+<tr><td><span style="color:var(--yellow)">warning</span></td><td><code>[:warning]</code></td><td>800→500Hz 双音警示</td><td>400Hz 单音</td><td>重要提醒</td></tr>
+</table>
+
+<h3>5.2 使用示例</h3>
+
+<div class="card">
+<h3>普通信息 (info)</h3>
+<pre><code>[VOICE_READER_START:info]
+这是普通提示内容。
+[VOICE_READER_END]</code></pre>
+</div>
+
+<div class="card green">
+<h3>成功提示 (success)</h3>
+<pre><code>[VOICE_READER_START:success]
+任务完成，所有测试通过。
+[VOICE_READER_END]</code></pre>
+</div>
+
+<div class="card red">
+<h3>错误警告 (error)</h3>
+<pre><code>[VOICE_READER_START:error]
+操作失败，请检查配置后重试。
+[VOICE_READER_END]</code></pre>
+</div>
+
+<div class="card yellow">
+<h3>重要提醒 (warning)</h3>
+<pre><code>[VOICE_READER_START:warning]
+即将执行重要操作，请确认。
+[VOICE_READER_END]</code></pre>
+</div>
+
+<div class="page-num">第 5 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 6 页：系统架构 ==================== -->
+<div class="page" id="arch">
+<h2>系统架构</h2>
+
+<div class="flow">
+<span class="step-item">用户输入</span><span class="arr">→</span>
+<span class="step-item">AI 处理</span><span class="arr">→</span>
+<span class="step-item">写入 pending.txt</span><span class="arr">→</span>
+<span class="step-item">监听器轮询</span><span class="arr">→</span>
+<span class="step-item">开始提示音</span><span class="arr">→</span>
+<span class="step-item">SAPI 朗读</span><span class="arr">→</span>
+<span class="step-item">结束提示音</span><span class="arr">→</span>
+<span class="step-item">清空文件</span>
+</div>
+
+<h3>6.1 架构详解</h3>
+<table>
+<tr><th>组件</th><th>职责</th><th>实现</th></tr>
+<tr><td>AI 注入器</td><td>在回复前后写入 pending.txt</td><td>SKILL.md 定义</td></tr>
+<tr><td>pending.txt</td><td>共享文件，跨任务通信</td><td>固定路径，所有任务可写</td></tr>
+<tr><td>voice-watcher</td><td>后台监听器，2 秒轮询检测</td><td>Node.js + ES Module</td></tr>
+<tr><td>voice-reader</td><td>朗读引擎，解析标记并调用 SAPI</td><td>Node.js + PowerShell</td></tr>
+<tr><td>lib.js</td><td>公共模块，配置与工具函数</td><td>提示音配置、文本清洗</td></tr>
+<tr><td>SAPI 引擎</td><td>Windows 原生 TTS，多音字准确</td><td>ComObject SAPI.SpVoice</td></tr>
+</table>
+
+<h3>6.2 文本处理流程</h3>
+<pre><code>原始文本
+  → 去除代码块 ```...```
+  → 去除行内代码 `...`
+  → 去除加粗 **...**
+  → 去除标题 # ...
+  → 去除链接 [text](url)
+  → 去除 URL
+  → 去除列表标记 - * +
+  → 合并多余空行
+  → 超过 200 字自动截断
+  → 写入 pending.txt</code></pre>
+
+<div class="page-num">第 6 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 7 页：故障排查 ==================== -->
+<div class="page" id="faq">
+<h2>故障排查</h2>
+
+<div class="card red">
+<h3>问题 1：完全听不到声音</h3>
+<ol>
+<li>检查系统音量是否打开</li>
+<li>确认监听器在运行：<code>Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -like '*voice-watcher*' }</code></li>
+<li>直接测试：<code>node voice-reader.mjs "测试朗读"</code></li>
+<li>检查 <code>pending.txt</code> 是否有内容</li>
+</ol>
+</div>
+
+<div class="card yellow">
+<h3>问题 2：新任务无法调用</h3>
+<ol>
+<li>输入 <code>Use Skill: voice-reader</code> 显式调用</li>
+<li>SKILL.md 中路径使用全局路径 <code>C:\Users\15390\.trae-cn\work\.voice-reader\</code>，不依赖 workspace</li>
+<li>确保 <code>skill-config.json</code> 中 <code>voice-reader-injector</code> 的 <code>enabled: true</code></li>
+<li>若仍失败，重启 Trae 后重试</li>
+</ol>
+</div>
+
+<div class="card">
+<h3>问题 3：朗读声音过快</h3>
+<p>检查 <code>lib.js</code> 中的 <code>SPEAK_RATE</code>，当前设置为 <code>0</code>（默认语速）。调整为：<code>-10</code> 最慢 → <code>+10</code> 最快。</p>
+</div>
+
+<div class="card">
+<h3>问题 4：朗读不完整</h3>
+<ul><li>内容超过 200 字自动截断，请分段写入</li><li>代码块、路径、URL 会被自动过滤</li></ul>
+</div>
+
+<div class="card">
+<h3>问题 5：监听器突然退出</h3>
+<pre><code># 检查是否有僵尸 pending.txt
+Get-Content "C:\Users\15390\.trae-cn\work\.voice-reader\pending.txt" -Encoding UTF8
+
+# 重新启动
+node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-watcher.mjs"</code></pre>
+</div>
+
+<div class="card">
+<h3>问题 6：多音字读错</h3>
+<p>SAPI 原生引擎上下文感知能力强，绝大多数多音字读对。若个别词汇读错，建议在文本中手动补充读音标注（如"银行 yín háng"）。</p>
+</div>
+
+<div class="page-num">第 7 页 / 共 8 页</div>
+</div>
+
+<!-- ==================== 第 8 页：配置选项 ==================== -->
+<div class="page" id="config">
+<h2>配置选项</h2>
+
+<h3>7.1 语速调节</h3>
+<p>修改 <code>lib.js</code> 中的 <code>SPEAK_RATE</code>：</p>
+<pre><code>export const SPEAK_RATE = 0;  // 当前：默认语速
+// 可选范围：-10（最慢） ~ +10（最快）</code></pre>
+
+<h3>7.2 音量调节</h3>
+<p>在 <code>voice-reader.mjs</code> 的 <code>speak()</code> 函数中，PowerShell 部分添加：</p>
+<pre><code>$voice.Volume = 80  // 0-100，默认 100</code></pre>
+
+<h3>7.3 提示音自定义</h3>
+<p>修改 <code>lib.js</code> 中的 <code>BEEP</code> 对象。格式：<code>频率Hz,持续时间ms</code>，多段用 <code>;</code> 分隔：</p>
+<pre><code>export const BEEP = {
+    info: { start: "800,120;80;1200,120;150", end: "600,120" },
+    success: { start: "600,100;80;800,100;80;1200,120;150", end: "1200,80;60;600,80" },
+    error: { start: "1000,150;80;600,150;80;400,150;200", end: "300,120" },
+    warning: { start: "800,200;100;500,200;150", end: "400,120" }
+};</code></pre>
+
+<h3>7.4 轮询间隔</h3>
+<p>修改 <code>lib.js</code> 中的 <code>POLL_INTERVAL</code>（毫秒）：</p>
+<pre><code>export const POLL_INTERVAL = 2000;  // 当前：2 秒</code></pre>
+
+<h3>7.5 共享文件路径</h3>
+<p>修改 <code>lib.js</code> 中的 <code>PENDING</code> 路径，或修改 <code>voice-watcher.mjs</code> 导入的常量：</p>
+<pre><code>export const PENDING = "C:\\Users\\15390\\.trae-cn\\work\\.voice-reader\\pending.txt";</code></pre>
+
+<h3>7.6 开机自启</h3>
+<ol>
+<li>按 <kbd>Win</kbd> + <kbd>R</kbd>，输入 <code>shell:startup</code></li>
+<li>创建 <code>voice-reader.bat</code>，内容：</li>
+</ol>
+<pre><code>@echo off
+node "C:\Users\15390\.trae-cn\work\.voice-reader\voice-watcher.mjs"</code></pre>
+
+<h3>7.7 版本历史</h3>
+<table>
+<tr><th>版本</th><th>变更</th></tr>
+<tr><td>5.0</td><td>文件精简、SPEAK_RATE=0、全局路径、多页说明书</td></tr>
+<tr><td>4.0</td><td>差异化管理、朗读用户输入、提示音</td></tr>
+<tr><td>3.0</td><td>暂停控制 --stop</td></tr>
+<tr><td>2.0</td><td>后台监听器自动朗读</td></tr>
+<tr><td>1.0</td><td>基础 SAPI 朗读引擎</td></tr>
+</table>
+
+<div class="footer">
+Trae Voice Reader v5.0 · 第 8 页 · 共 8 页 · 2026-08-11
+</div>
+</div>
+
+</div>
+</body>
+</html>
