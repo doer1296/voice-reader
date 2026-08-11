@@ -1,33 +1,13 @@
 {
   "name": "voice-reader",
-  "version": "6.0.0",
-  "description": "Voice Reader — Windows TTS 语音朗读系统。基于 SAPI 引擎，支持四种提示音，零外部依赖。",
+  "version": "5.0.0",
+  "description": "Trae Voice Reader - Windows SAPI TTS",
   "type": "module",
-  "main": "src/voice-reader.mjs",
+  "main": "voice-reader.mjs",
   "scripts": {
-    "read": "node src/voice-reader.mjs",
-    "watch": "node src/voice-watcher.mjs",
-    "stop": "node src/voice-reader.mjs --stop",
-    "status": "node src/voice-reader.mjs --status",
-    "help": "node src/voice-reader.mjs --help",
-    "test": "node src/voice-reader.mjs \"Voice Reader 测试成功！\""
+    "watch": "node voice-watcher.mjs"
   },
-  "keywords": [
-    "tts",
-    "voice",
-    "sapi",
-    "reader",
-    "text-to-speech",
-    "windows",
-    "accessibility"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/doer1296/voice-reader"
-  }
+  "keywords": ["tts", "voice", "sapi", "reader"],
+  "license": "ISC",
+  "dependencies": {}
 }
